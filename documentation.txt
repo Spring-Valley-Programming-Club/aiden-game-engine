@@ -1,0 +1,40 @@
+ * Last updated on 2.24.2021 *
+===============================
+[DIRECTORY]
+The directory of QuackEngine is as follows:
+  |engine (root)
+  :  |script
+  :  |sprite
+  :  :  |workingsaves
+The /engine/ directory contains base files, such as index.html and documentation.txt.
+The /engine/script/ directory contains all JavaScript files used by the engine.
+The /engine/sprite/ directory contains all sprites used by the engine in rendering and the /workingsaves/ directory, which is a temporary folder for storing save files of sprites currently in an incomplete state.
+
+--
+
+[INDEX]
+The index.html file contains the base setup for QuackEngine. This includes:
+   - base CSS code
+   - the canvas
+   - the HUD
+   - the script landing zone
+   - core scripts, such as:
+      - gamestate.js
+      - load.js
+      - screensetup.js
+      - input.js
+      - map.js
+      - player.js
+      - entity.js
+      - loops.js
+
+--
+
+[GAMESTATE]
+The gamestate object, G, stores values that need to be easily accessable by any part of the game that relate to the core functionality of the game. The gamestate object contains the following:
+   [SCREEN]
+   
+
+--
+
+[CANVAS / DRAWING]

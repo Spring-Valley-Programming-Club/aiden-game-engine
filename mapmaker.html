@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Map Creator</title>
+      <style>
+         body *{
+            font-family: monospace;
+         }
+         #map{
+            /*width: 80%;*/
+            width: calc(100% - 270px);
+            height: 100%;
+            overflow: auto;
+            left: 0;
+            bottom: 0;
+            margin-left: 0;
+            margin-bottom: 0;
+            position: absolute;
+            border-right: 1px solid black;
+            /*box-sizing: border-box;*/
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            background-color: grey;
+         }
+         #toolbar{
+            position: absolute;
+            right: 0;
+            /*width: 20%;*/
+            width: 270px;
+            height: 100%;
+            top: 0;
+            padding: 0;
+            margin: 0;
+            background-color: lightgrey;
+            overflow: auto;
+         }
+         #sizechange{
+            text-align: center;
+            padding-top: 0;
+         }
+         .mapbasein{
+            /*width: 100px;*/
+            background-color: lightgrey;
+            /*color: grey;*/
+            /*background-color: rgba(100,100,100,0.1);*/
+            border: none;
+            margin: 0;
+            margin-top: 2px;
+            text-align: left;
+            width: calc(100% - 4em + 1px);
+            border-left: 2px solid rgb(25,25,25);
+            padding-left: 4px;
+            box-sizing: border-box;
+            float: right;
+         }
+         .mapbasein:hover{
+            background-color: rgba(100,100,100,0.2);
+            font-style: italic;
+            padding-top: 0;
+            outline: none;
+         }
+         .mapbasein:focus{
+            background-color: rgba(100,100,100,0.3);
+            font-style: normal;
+            padding-top: 1px;
+            outline: none;
+         }
+         .mapbaseinlabel{
+            float: left;
+            border: none;
+            color: rgb(25,25,25);
+            /*background-color: rgba(100,100,100,0.3);*/
+            /*border-right: 2px dotted grey;*/
+            text-align: right;
+            width: 4em;
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 2px;
+            padding: 1px;
+            /*margin-top: 2px;*/
+            min-width: 4em;
+            position: inline;
+            box-sizing: border-box;
+            font-weight: bold;
+         }
+         .mapbaseincont{
+            margin: 2px;
+            text-align: left;
+            vetical-align: center;
+            /*margin*/
+         }
+         #namein{
+            margin-top: none;
+         }
+         #nameinlabel{
+            margin-top: none;
+         }
+         #grid{
+            /*max-width: 100%;*/
+            /*max-height: 100%;*/
+            padding: 0;
+            text-align: center;
+            margin: 0;
+            border-collapse: collapse;
+            /*border-spacing: 2px;*/
+         }
+         .PreviewTile{
+            background-color: white;
+            padding: 0;
+            text-align: center;
+            margin: 0;
+            border: 1px solid grey;
+            /*box-sizing: border-box;*/
+            background-size: 100% 100%;
+         }
+         .PreviewTile:hover{
+            /*border: 1px solid lightblue;*/
+            box-sizing: border-box;
+            /*box-shadow: 1px 1px 2px white, -1px -1px 2px white, -1px 1px 2px white, 1px -1px 2px white;*/
+            box-shadow: 1px 1px 2px white inset, -1px -1px 2px white inset, -1px 1px 2px white inset, 1px -1px 2px white inset;
+            padding: 0;
+            text-align: center;
+            margin: 0;
+         }
+         .ToolsSec{
+            padding: 2px;
+            margin: 0;
+            overflow: auto;
+         }
+         #saveload{
+            text-align: center;
+         }
+         #tilesmenu{
+            text-align: center;
+            max-height: 50%;
+         }
+         #tiles{
+            text-align: center;
+         }
+         .menusep{
+            margin: 0;
+            margin-top: 2px;
+            margin-bottom: 2px;
+         }
+         .TileClassEntry{
+            background-color: rgba(100,100,100,0.2);
+            margin: 3px;
+            margin-left: 2px;
+            margin-right: 0;
+         }
+         #refreshseg{
+            text-align: center;
+         }
+         .TileDisplayFrame{
+            margin: 1px;
+            padding: 0;
+            margin-bottom: -4px;
+            /*margin-right: 2px;*/
+         }
+         .TileSelectFrame{
+            margin: 1px;
+            padding: 0;
+            margin-bottom: -4px;
+            /*margin-right: 2px;*/
+         }
+         .TileSelectFrame:hover{
+            margin: 1px;
+            padding: 0;
+            margin-bottom: -4px;
+            box-shadow: 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black, 1px -1px 2px black;
+            /*box-shadow: 1px 1px 2px white, -1px -1px 2px white, -1px 1px 2px white, 1px -1px 2px white;*/
+            /*margin-right: 2px;*/
+         }
+         #tiledisplay{
+            margin: 2px;
+            margin-bottom: -1px;
+            /*margin-bottom: -2px;*/
+            padding: 1px;
+            max-height: 202px;
+            overflow: auto;
+            /*background-color: rgba(100,100,100,0.2);*/
+         }
+         #togglevisuals{
+            text-align: center;
+         }
+         #footnote{
+            text-align: right;
+            color: grey;
+            font-style: italic;
+            padding-right: 5px;
+         }
+         #confirmresize{
+            /*color: grey;*/
+            font-style: italic;
+            opacity: 0.75;
+            margin-top: 2px;
+            margin-bottom: 2px;
+         }
+         #changeselection{
+            visibility: hidden;
+            width: 350px;
+            position: absolute;
+            left: 0;
+            /*left: 50%;*/
+            top: 0;
+            /*top: 50%;*/
+            /*transform: translate(-50%, -50%);*/
+            padding: 2px;
+            background-color: rgba(211,211,211,0.8);
+            box-sizing: border-box;
+            border: 1px solid black;
+            /*max-height: 80%;*/
+         }
+         #labelforchange{
+            vertical-align: center;
+            /*text-align: left;*/
+            float: left;
+            padding: 3px;
+            margin: 2px;
+         }
+         #cancelchange{
+            float: right;
+            margin: 2px;
+            text-align: center;
+         }
+         #toolbarcover{
+            visibility: hidden;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            position: absolute;
+         }
+         #changeselectionsbtns{
+            max-height: 324px;
+            overflow: auto;
+            vertical-align: center;
+            text-align: center;
+            /*margin: 1px;*/
+            padding: 1px;
+         }
+         #tilechangetitlehold{
+            vertical-align: center;
+            margin: 2px;
+         }
+      </style>
+   </head>
+   <body>
+      <div id='toolbar'>
+         <span id='toolbarcover'></span>
+         <hr class='menusep' />
+         <div id='sizechange' class='ToolsSec'>
+            <div class='mapbaseincont'>
+               <input id='namein' class='mapbasein' type='text' value='New map'>
+               <label for='namein' id='nameinlabel' class='mapbaseinlabel'>Name</label>
+            </div>
+            <div class='mapbaseincont'>
+               <input id='width' class='mapbasein' type='text' value='32'>
+               <label for='width' class='mapbaseinlabel'>Width</label>
+            </div>
+            <!--<br />-->
+            <div class='mapbaseincont'>
+               <input id='height' class='mapbasein' type='text' value='32'>
+               <label for='height' class='mapbaseinlabel'>Height</label>
+            </div>
+            <!--<br />-->
+            <div class='mapbaseincont'>
+               <input id='zoom' class='mapbasein' type='text' value='32'>
+               <label for='scale' class='mapbaseinlabel'>Zoom</label>
+            </div>
+            <!--<br />-->
+            <button id='confirmresize'>Confirm new size</button>
+            <br />
+            <button id='cleavemap' title='Not yet implemented'>Splice map</button>
+         </div>
+         <hr class='menusep' />
+         <div id='tilesmenu' class='ToolsSec'>
+            <span id='tiles'>
+               <button id='addtile' title='Not yet implemented'> Add tile</button>
+               <br />
+               <button id='editcollision' style='margin-top: 2px;' title='Not yet implemented'>Edit collisions</button>
+               <br />
+               <button id='createfamily' style='margin-top: 2px;' title='Not yet implemented'>Manage families</button>
+               <br />
+               <button id='cleartile' style='margin-top: 2px;' title='Not yet implemented'>Remove unused</button>
+            </span>
+            <span id='tilelist'>
+            </span>
+            <div id='tiledisplay'>
+               <!--<img title='path: ../sprite/border0.png&#013;id: 0' id='previewtest'></img>-->
+            </div>
+         </div>
+         <hr class='menusep' />
+         <div id='togglevisuals' class='ToolsSec'>
+            <button id='showsprite' title='Not yet implemented'>Show sprite</button>
+            <br />
+            <button id='showid' style='margin-top: 2px;' title='Not yet implemented'>Show ID</button>
+            <br />
+            <button id='showcollider' style='margin-top: 2px;' title='Not yet implemented'>Show collision</button>
+         </div>
+         <hr class='menusep' />
+         <div id='refreshseg' class='ToolsSec'>
+            <button id='ToggleLighting' title='Currently on'>Toggle preview shading</button>
+            <br />
+            <button id='AutomaticEdge' title='Not yet implemented' style='margin-top: 2px;'>Show recommended edges</button>
+            <br />
+            <button id='ForceRefreshMap' style='margin-top: 2px;'>Force preview refresh</button>
+            <br />
+            <button id='ForceRefreshTool' style='margin-top: 2px;' title='Not yet implemented'>Force toolbar refresh</button>
+         </div>
+         <hr class='menusep' />
+         <div id='saveload' class='ToolsSec'>
+            <button id='SaveFile' title='Not yet implemented'>Save to file</button>
+            <br />
+            <button id='LoadFile' style='margin-top: 2px;' title='Not yet implemented'>Load from file</button>
+            <br />
+            <button id='SaveBrowser' style='margin-top: 2px;' title='Not yet implemented'>Save to browser</button>
+            <br />
+            <button id='LoadBrowser' style='margin-top: 2px;' title='Not yet implemented'>Load from browser</button>
+            <br />
+            <button id='export' style='margin-top: 2px;' title='Not yet implemented'>Export</button>
+            <br />
+            <button id='new' style='margin-top: 2px;' title='Not yet implemented'>New map</button>
+         </div>
+         <hr class='menusep' />
+         <!--<p id='footnote' class='ToolsSec'>(*) = Not yet implemented</p>-->
+         <!--<hr class='menusep' />-->
+      </div>
+      
+      <div id='map'>
+         <table id='grid'></table>
+      </div>
+         <div id='changeselection'>
+            <span id='tilechangetitlehold'>
+               <!--<span id='arrowtotile'></span>-->
+               <p id='labelforchange'>Current tile: unselected</p>
+               <button id='cancelchange'>X</button>
+            </span>
+            <br />
+            <hr style='width: calc(100% + 2px); margin-left: -2px; margin-bottom: 2px;'/>
+            <div id='changeselectionsbtns'></div>
+         </div>
+      <script>
+         window.onerror = (err) => {
+            alert(err);
+         }
+         var widthinput = document.getElementById('width');
+         var heightinput = document.getElementById('height');
+         var scaleinput = document.getElementById('zoom');
+         var tileslisting = document.getElementById('tilelist');
+         var TileDisplay = document.getElementById('tiledisplay');
+         var MapPreviewContain = document.getElementById('map');
+         var previewmap = document.getElementById('grid');
+         var refreshmap = document.getElementById('ForceRefreshMap');
+         var refreshtools = document.getElementById('ForceRefreshTool');
+         var updatemapbtn = document.getElementById('confirmresize');
+         var blurtoolbar = document.getElementById('toolbarcover');
+         var changetilemenu = document.getElementById('changeselection');
+         var changetilelist = document.getElementById('changeselectionsbtns');
+         var changetilelabel = document.getElementById('labelforchange');
+         var cancelchangebtn = document.getElementById('cancelchange');
+         var togglepreviewshade = document.getElementById('ToggleLighting');
+         
+         var tiles = [];
+         var TilePreviews = [];
+         var MapData = [[0,0],[0,0]];
+         var UsedTiles = [];
+         var currentselection = '0x0';
+         var changingtile = 0;
+         
+         var currset = {
+            w: 32,
+            h: 32,
+            z: 32,
+            shading: 1
+         };
+         function UpdateCookieConfig(){
+            localStorage.setItem('currset', JSON.stringify(currset));
+         }
+         function UpdateCookieMap(){
+            localStorage.setItem('map', JSON.stringify(MapData));
+         }
+         if(localStorage.getItem('currset')){
+            currset = JSON.parse(localStorage.getItem('currset'));
+            widthinput.value = currset.w;
+            heightinput.value = currset.h;
+            scaleinput.value = currset.z;
+            togglepreviewshade.title = currset.shading ? 'Currently on' : 'Currently off';
+         }else{
+            UpdateCookieConfig();
+         }
+         if(localStorage.getItem('map')){
+            MapData = JSON.parse(localStorage.getItem('map'));
+            updatemappreview();
+         }else{
+            UpdateCookieMap();
+         }
+         togglepreviewshade.onclick = () => {
+            if(currset.shading){
+               currset.shading = 0;
+               togglepreviewshade.title = 'Currently off';
+            }else{
+               currset.shading = 1;
+               togglepreviewshade.title = 'Currently on';
+            }
+            UpdateCookieConfig();
+         }
+         function unconfirmedresize(){
+            return widthinput.value != currset.w || heightinput.value != currset.h || scaleinput.value != currset.z;
+         }
+         
+         class Tile{
+            constructor(path, tilename, index){
+               // this.tileclass = tileclass;
+               // this.tiletype = tiletype;
+               this.name = 'none';
+               if(tilename){
+                  this.name = tilename;
+               }
+               this.family = 'none';
+               this.class = 'none';
+               this.html = document.createElement('img');
+               this.img = new Image();
+               this.img.onload = () => {
+                  if(index){
+                     tiles[index] = this;
+                  }else{
+                     tiles.push(this);
+                  }
+                  let preview = document.createElement('img');
+                  preview.src = path;
+                  let tilename = 'Name: ' + this.name;
+                  let tileid = 'ID: ' + tiles.indexOf(this);
+                  let tilepath = 'Path: ' + path;
+                  let tilefamily = 'Family: ' + this.family;
+                  let tileclass = 'Class: ' + this.class;
+                  let infohover = tilename + ' \n' + tileid + ' \n' + tilepath + ' \n' + tilefamily + ' \n' + tileclass;
+                  preview.title = infohover;
+                  preview.className = 'TileDisplayFrame';
+                  if(index){
+                     TilePreviews[index] = preview;
+                  }else{
+                     TilePreviews.push(preview);
+                  }
+                  // TileDisplay.appendChild(preview);
+               }
+               this.img.src = path;
+            }
+         }
+         
+         function NewMap(){
+            let x = widthinput.value;
+            let y = heightinput.value;
+            let mapdata = [];
+            for(let i = 0; i < y; i++){
+               let thisrow = [];
+               for(let k = 0; k < x; k++){
+                  thisrow[k] = 0;
+               }
+               mapdata.push(thisrow);
+            }
+            return mapdata;
+         }
+         
+         var ErrorTile = new Tile('./sprite/missing.png', 'errdefault', 0);
+         var BorderTile = new Tile('./sprite/border0.png', 'walldefault', 1);
+         var GrassTileTL = new Tile('./sprite/grass/edgetl.png', 'grassedgetopleft', (5-3));
+         var GrassTileT = new Tile('./sprite/grass/edget.png', 'grassedgetop', (6-3));
+         var GrassTileTR = new Tile('./sprite/grass/edgetr.png', 'grassedgetopright', (7-3));
+         var GrassCornerBR = new Tile('./sprite/grass/cornerbr.png', 'grasscornerbottomright', (8-3));
+         var GrassCornerBL = new Tile('./sprite/grass/cornerbl.png', 'grasscornerbottomleft', (9-3));
+         var GrassTileL = new Tile('./sprite/grass/edgel.png', 'grassedgeleft', (10-3));
+         var GrassTileInner = new Tile('./sprite/grass/middle.png', 'grassmiddle', (11-3));
+         var GrassTileR = new Tile('./sprite/grass/edger.png', 'grassedgeright', (12-3));
+         var GrassCornerTR = new Tile('./sprite/grass/cornertr.png', 'grasscornertopright', (13-3));
+         var GrassCornerTL = new Tile('./sprite/grass/cornertl.png', 'grasscornertopleft', (14-3));
+         var GrassTileBL = new Tile('./sprite/grass/edgebl.png', 'grassedgebottomleft', (15-3));
+         var GrassTileB = new Tile('./sprite/grass/edgeb.png', 'grassedgebottom', (16-3));
+         var GrassTileBR = new Tile('./sprite/grass/edgebr.png', 'grassedgebottomright', (17-3));
+         var GrassTileBlock = new Tile('./sprite/grass/plain.png', 'grassplain', (18-3));
+         var DirtTileBlock = new Tile('./sprite/dirt/plain.png', 'dirtplain', (19-3));
+         var DirtTileTL = new Tile('./sprite/dirt/edgetl.png', 'dirtedgetopleft', (20-3));
+         var DirtTileT = new Tile('./sprite/dirt/edget.png', 'dirtedgetop', (21-3));
+         var DirtTileTR = new Tile('./sprite/dirt/edgetr.png', 'dirtedgetopright', (22-3));
+         var DirtCornerBR = new Tile('./sprite/dirt/cornerbr.png', 'dirtcornerbottomright', (23-3));
+         var DirtCornerBL = new Tile('./sprite/dirt/cornerbl.png', 'dirtcornerbottomleft', (24-3));
+         var DirtTileL = new Tile('./sprite/dirt/edgel.png', 'dirtedgeleft', (25-3));
+         var DirtTileInner = new Tile('./sprite/dirt/middle.png', 'dirtmiddle', (26-3));
+         var DirtTileR = new Tile('./sprite/dirt/edger.png', 'dirtedgeright', (27-3));
+         var DirtCornerTR = new Tile('./sprite/dirt/cornertr.png', 'dirtcornertopright', 25);
+         var DirtCornerTL = new Tile('./sprite/dirt/cornertl.png', 'dirtcornertopleft', 26);
+         var DirtTileBL = new Tile('./sprite/dirt/edgebl.png', 'dirtedgebottomleft', (30-3));
+         var DirtTileB = new Tile('./sprite/dirt/edgeb.png', 'dirtedgebottom', (31-3));
+         var DirtTileBR = new Tile('./sprite/dirt/edgebr.png', 'dirtedgebottomright', (32-3));
+         var MudTileBlock = new Tile('./sprite/mud0.png', 'muddefault', 30);
+         
+         function UpdateTools(){
+            try{
+               TileDisplay.innerHTML = '';
+               for(let i = 0; i < TilePreviews.length; i++){
+                  TileDisplay.appendChild(TilePreviews[i]);
+               }
+               if(unconfirmedresize()){
+                  updatemapbtn.style.color = 'black';
+                  updatemapbtn.style.opacity = '1';
+                  updatemapbtn.style.paddingTop = '2px';
+                  updatemapbtn.style.fontStyle = 'normal';
+               }else if(changingtile){
+                  updatemapbtn.style.color = 'grey';
+                  updatemapbtn.style.opacity = '1';
+                  updatemapbtn.style.paddingTop = '1px';
+                  updatemapbtn.style.fontStyle = 'italic';
+               }else{
+                  updatemapbtn.style.color = 'grey';
+                  updatemapbtn.style.opacity = '0.75';
+                  updatemapbtn.style.paddingTop = '1px';
+                  updatemapbtn.style.fontStyle = 'italic';
+               }
+            }
+            catch(err){
+               console.log(err);
+            }
+            window.requestAnimationFrame(UpdateTools);
+         }
+         window.requestAnimationFrame(UpdateTools);
+         
+         async function ResizePreview(){
+            previewmap.style.width = (scaleinput.value * widthinput.value) + 'px';
+            previewmap.style.height = (scaleinput.value * heightinput.value) + 'px';
+            let tempnewmap = NewMap();
+            for(let i = 0; i < MapData.length && i < tempnewmap.length; i++){
+               for(let k = 0; k < MapData[i].length && k < tempnewmap[i].length; k++){
+                  tempnewmap[i][k] = MapData[i][k];
+               }
+            }
+            MapData = tempnewmap;
+            return new Promise(resolve => {
+               resolve(MapData);
+            });
+         }
+         async function UpdateMapSprites(){
+            let rows = previewmap.childNodes;
+            for(let i = 0; i < rows.length; i++){
+               let columns = rows[i].childNodes;
+               for(let k = 0; k < columns.length; k++){
+                  columns[k].style.backgroundImage = 'url(' + tiles[MapData[i][k]].img.src + ')';
+               }
+               // alert(JSON.stringify(columns));
+            }
+            return new Promise(resolve => {
+               resolve('Refreshed map sprites');
+            });
+         }
+         async function GenNewPreview(){
+            previewmap.innerHTML = '';
+            let x = widthinput.value;
+            let y = heightinput.value;
+            for(let i = 0; i < y; i++){
+               let thisrow = document.createElement('tr');
+               for(let k = 0; k < x; k++){
+                  let thisdata = document.createElement('td');
+                  thisdata.id = k + 'x' + i;
+                  thisdata.onclick = (e) => {
+                     // alert(thisdata.id);
+                     e.stopPropagation();
+                     CloseTileSelectMenu();
+                     currentselection = k + 'x' + i;
+                     OpenTileSelectMenu(k + 'x' + i, e.clientX, e.clientY);
+                  }
+                  thisdata.className = 'PreviewTile';
+                  thisrow.appendChild(thisdata);
+               }
+               previewmap.appendChild(thisrow);
+            }
+            await ResizePreview();
+            await UpdateMapSprites();
+            CompileChangeList();
+            return new Promise(resolve => {
+               resolve('Made new preview');
+            });
+         }
+         function updatemappreview(){
+            if(unconfirmedresize()){
+               currset.w = widthinput.value;
+               currset.h = heightinput.value;
+               currset.z = scaleinput.value;
+               UpdateCookieConfig();
+               GenNewPreview();
+            }
+         }
+         updatemapbtn.onclick = updatemappreview;
+         refreshmap.onclick = GenNewPreview;
+         window.onload = () => {
+            ResizePreview();
+            GenNewPreview();
+         };
+         function CompileChangeList(){
+            for(let i = 0; i < TilePreviews.length; i++){
+               changetilelist.innerHTML = '';
+               let img = document.createElement('img');
+               img.onload = () => {
+                  img.width *= 2;
+                  img.height *= 2;
+                  changetilelist.appendChild(img);
+               };
+               img.className = 'TileSelectFrame';
+               img.onclick = () => {
+                  ChangeTileID(i);
+                  UpdateMapSprites();
+                  CloseTileSelectMenu();
+               };
+               img.src = TilePreviews[i].src;
+               // alert(changetilelist.childNodes);
+            }
+         }
+         function ToggleDimPreview(to){
+            let xind = currentselection.slice(0, currentselection.indexOf('x'));
+            let yind = currentselection.slice(currentselection.indexOf('x') + 1);
+            if(to == 'dim'){
+               let rows = previewmap.childNodes;
+               for(let i = 0; i < rows.length; i++){
+                  let columns = rows[i].childNodes;
+                  for(let k = 0; k < columns.length; k++){
+                     if(xind == k || yind == i){
+                        columns[k].style.opacity = '0.75';
+                     }else{
+                        columns[k].style.opacity = '0.45';
+                     }
+                  }
+               }
+            }
+            if(to == 'un'){
+               let GridTiles = document.getElementsByClassName('PreviewTile');
+               for(let i = 0; i < GridTiles.length; i++){
+                  GridTiles[i].style.opacity = '1';
+               }
+               // GridTiles.forEach(l => l.style.opacity = '1');
+               // let rows = previewmap.childNodes;
+               // for(let i = 0; i < rows.length; i++){
+                  // let columns = rows[i].childNodes;
+                  // for(let k = 0; k < columns.length; k++){
+                     // columns[k].style.opacity = '1';
+                  // }
+               // }
+            }
+         }
+         function OpenTileSelectMenu(tile, x, y){
+            let cntnrw = changetilemenu.offsetWidth;
+            let cntnrh = changetilemenu.offsetHeight;
+            CompileChangeList();
+            if(currset.shading) ToggleDimPreview('dim');
+            MapPreviewContain.style.overflow = 'hidden';
+            previewmap.style.backgroundColor = 'black';
+            // let xoff = MapPreviewContain.scrollLeft;
+            // let yoff = MapPreviewContain.scrollTop;
+            let xind = tile.slice(0, tile.indexOf('x'));
+            let yind = tile.slice(tile.indexOf('x') + 1);
+            let curcel = previewmap.childNodes[yind].childNodes[xind];
+            curcel.style.opacity = '1';
+            curcel.style.opacity = '1';
+            curcel.style.boxShadow = '1px 1px 2px white inset,-1px -1px 2px white inset,-1px 1px 2px white inset,1px -1px 2px white inset';
+            changetilelabel.innerHTML = 'Selection: (' + xind + ', ' + yind + ')';
+            blurtoolbar.style.visibility = 'visible';
+            let xpos = x + 15;
+            let xend = x + 15 + cntnrw;
+            let ypos = y - 15;
+            let yend = y - 15 + cntnrh;
+            if(ypos - 15 < 5){
+               ypos = 5;
+            }
+            if(yend > window.innerHeight - 5){
+               ypos -= (yend - (window.innerHeight - 5));
+            }
+            if(xpos < 5){
+               xpos = 5;
+            }
+            if(xend > window.innerWidth - 5){
+               xpos -= xend - window.innerWidth - 5;
+            }
+            if(ypos < y && yend > y && xpos < x && xend > x){
+               xpos = x - 5 - cntrw;
+            }
+            changetilemenu.style.left = xpos + 'px';
+            changetilemenu.style.top = ypos + 'px';
+            changetilemenu.style.visibility = 'visible';
+            changingtile = 1;
+         }
+         function CloseTileSelectMenu(){
+            let xind = currentselection.slice(0, currentselection.indexOf('x'));
+            let yind = currentselection.slice(currentselection.indexOf('x') + 1);
+            let curcel = previewmap.childNodes[yind].childNodes[xind];
+            if(currset.shading) ToggleDimPreview('un');
+            changingtile = 0;
+            previewmap.style.backgroundColor = 'rgba(255,255,255,0)';
+            MapPreviewContain.style.overflow = 'auto';
+            blurtoolbar.style.visibility = 'hidden';
+            changetilemenu.style.visibility = 'hidden';
+            curcel.style.boxShadow = 'none';
+         }
+         cancelchangebtn.onclick = CloseTileSelectMenu;
+         blurtoolbar.onclick = CloseTileSelectMenu;
+         MapPreviewContain.onclick = CloseTileSelectMenu;
+         
+         window.onkeydown = (e) => {
+            if(e.key == 'Escape' && changingtile == 1){
+               CloseTileSelectMenu();
+            }
+            if(e.key == 'Enter' && unconfirmedresize()){
+               updatemappreview();
+            }
+         }
+         function ChangeTileID(id){
+            let xind = currentselection.slice(0, currentselection.indexOf('x'));
+            let yind = currentselection.slice(currentselection.indexOf('x') + 1);
+            MapData[yind][xind] = id;
+            UpdateCookieMap();
+         }
+      </script>
+   </body>
+</html>
